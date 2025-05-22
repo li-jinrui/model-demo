@@ -1,17 +1,201 @@
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Three.js立方体演示</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Model Viewer</title>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="main.js"></script>
+  <script src="lib/controls/OrbitControls"></script>
   <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .header {
+      background-color: #42b983;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .model-container {
+      flex: 1;
+      position: relative;
+      background-color: #f0f0f0;
+    }
+
+    .renderArea {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .footer {
+      background-color: #35495e;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <!-- Three.js渲染的画布会自动插入到这里 -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <script src="main.js"></script>
+  <div class="container">
+    <div class="header">
+      <div class="header-title">3D模型展示</div>
+    </div>
+    <div class="model-container">
+      <canvas id="renderCanvas" class="renderArea"></canvas> 
+    </div>
+    <div class="footer">
+      <div class="footer-text">底部信息</div>
+    </div>
+  </div>
+
+  <script>
+    // Main application class
+    class ModelViewer {
+      constructor() {
+        this.camera = null;
+        this.renderer = null;
+        this.scene = null;
+        this.testModel = null;
+        this.orbitControls = null;
+        this.lightSource = null;
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+          this.initBim();
+        });
+      }
+      
+      initBim() {
+        // Create scene
+        this.createScene();
+        // Create renderer
+        this.createRenderer();
+        // Load 3D models
+        this.load3DModels();
+        // Create camera
+        this.createCamera();
+        // Create lighting
+        this.createLighting();
+        // Create controls
+        this.createControls();
+        
+        // Start animation
+        this.animate();
+      }
+      
+      createScene() {
+        this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0xa0cbe9);
+      }
+      
+      createRenderer() {
+        const canvas = document.getElementById('renderCanvas');
+        const width = window.innerWidth;
+        const height = window.innerHeight - 80; // Account for header/footer
+        
+        this.renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          canvas: canvas
+        });
+        
+        this.renderer.setSize(width, height);
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1;
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
+        this.renderer.setClearColor(0xb9d3ff, 1);
+      }
+      
+      load3DModels() {
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+          'Soldier.glb', // Model path - place in same directory or adjust path
+          (gltf) => {
+            this.testModel = gltf.scene;
+            this.testModel.scale.setScalar(10);
+            this.scene.add(this.testModel);
+          },
+          (xhr) => {
+            console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+          },
+          (error) => {
+            console.error("An error happened", error);
+          }
+        );
+      }
+      
+      createCamera() {
+        const aspect = window.innerWidth / (window.innerHeight - 80);
+        this.camera = new THREE.PerspectiveCamera(100, aspect, 0.01, 1000);
+        this.camera.position.set(0, 60, -60);
+        this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+      }
+      
+      createLighting() {
+        this.lightSource = new THREE.DirectionalLight(0xffffff, 1);
+        this.lightSource.intensity = 1;
+        this.scene.add(this.lightSource);
+
+        const light = new THREE.AmbientLight(0x222222);
+        light.intensity = 1;
+        this.scene.add(light);
+      }
+      
+      createControls() {
+        this.orbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.orbitControls.enabled = true;
+        this.orbitControls.enableRotate = true;
+        this.orbitControls.enableZoom = true;
+        this.orbitControls.screenSpacePanning = false;
+        this.orbitControls.minDistance = 10;
+        this.orbitControls.maxDistance = 100;
+        this.orbitControls.target.set(0, 0, 0);
+      }
+      
+      animate() {
+        requestAnimationFrame(this.animate.bind(this));
+        if (this.orbitControls && this.orbitControls.enabled) {
+          this.orbitControls.update();
+        }
+        if (this.renderer && this.scene && this.camera) {
+          this.renderer.render(this.scene, this.camera);
+        }
+      }
+      
+      // Handle window resize
+      handleResize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight - 80;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+      }
+    }
+    
+    // Initialize the application
+    const app = new ModelViewer();
+    
+    // Add window resize handler
+    window.addEventListener('resize', () => {
+      app.handleResize();
+    });
+  </script>
 </body>
 </html>

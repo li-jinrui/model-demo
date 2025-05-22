@@ -1,4 +1,4 @@
-// 1. 初始化场景、相机、渲染器
+/* // 1. 初始化场景、相机、渲染器
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,                                   // 视野角度
@@ -45,4 +45,4 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}); */
