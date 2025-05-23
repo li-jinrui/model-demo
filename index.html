@@ -6,11 +6,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Model Viewer</title>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.module.js",
+      "three/": "https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/"
+    }
+  }
+  </script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.176.0/examples/js/controls/OrbitControls.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.176.0/examples/js/loaders/GLTFLoader.js"></script> -->
   <script src="main.js"></script>
-  <script src="lib/controls/OrbitControls"></script>
+  <!-- <script src="lib/controls/OrbitControls"></script> -->
   <style>
     body, html {
       margin: 0;
@@ -65,8 +73,23 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    // 通过CDN的ES模块版本引入
+
+      import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.module.js';
+  import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+  import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/loaders/GLTFLoader.js';
+
+
+/*     import * as THREE from './lib/three.module.js';
+    // import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/controls/OrbitControls.js';
+	import { OrbitControls } from "./lib/OrbitControls.js"
+    // import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.176.0/examples/jsm/loaders/GLTFLoader.js';
+	import { GLTFLoader } from "./lib/GLTFLoader.js"  */
+	    console.log(THREE);
+	
     // Main application class
+
     class ModelViewer {
       constructor() {
         this.camera = null;
@@ -123,9 +146,9 @@
       }
       
       load3DModels() {
-        const loader = new THREE.GLTFLoader();
+        const loader = new GLTFLoader();
         loader.load(
-          'Soldier.glb', // Model path - place in same directory or adjust path
+          '/model/Soldier.glb', // Model path - place in same directory or adjust path
           (gltf) => {
             this.testModel = gltf.scene;
             this.testModel.scale.setScalar(10);
@@ -158,7 +181,7 @@
       }
       
       createControls() {
-        this.orbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
         this.orbitControls.enabled = true;
         this.orbitControls.enableRotate = true;
         this.orbitControls.enableZoom = true;
