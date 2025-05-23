@@ -4,7 +4,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">sss -->
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>3D Model Viewer</title>
     <script type="importmap">
   {
@@ -159,6 +161,7 @@
           },
           (error) => {
             console.error("An error happened", error);
+            document.getElementById('error').innerText = "模型加载失败，请检查控制台";
           }
         );
       }
