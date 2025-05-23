@@ -148,7 +148,7 @@
       load3DModels() {
         const loader = new GLTFLoader();
         loader.load(
-          '/model/Soldier.glb', // Model path - place in same directory or adjust path
+          './model/Soldier.glb', // Model path - place in same directory or adjust path
           (gltf) => {
             this.testModel = gltf.scene;
             this.testModel.scale.setScalar(10);
