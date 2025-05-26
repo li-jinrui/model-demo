@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>3D Model (App Optimized)</title>
+  <!-- 关键：使用全局方式引入Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    #error { color: red; padding: 20px; display: none; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="error"></div>
+
+  <script>
+    // 1. 检测WebGL支持
+    if (!Detector || !Detector.webgl) {
+      document.getElementById('error').innerHTML = 
+        '您的设备不支持WebGL，请升级浏览器或系统';
+      document.getElementById('error').style.display = 'block';
+      throw new Error('WebGL not supported');
+    }
+
+    // 2. 初始化Three.js
+    const canvas = document.getElementById('canvas');
+    const renderer = new THREE.WebGLRenderer({ 
+      canvas,
+      antialias: true,
+      powerPreference: "high-performance" // 强制高性能模式
+    });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xa0cbe9);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 60, -60);
+
+    // 3. 添加光源
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(1, 1, 1);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x404040));
+
+    // 4. 加载模型（使用绝对URL）
+    new THREE.GLTFLoader().load(
+      'https://li-jinrui.github.io/model-demo/model/Soldier.glb',
+      (gltf) => {
+        gltf.scene.scale.set(10, 10, 10);
+        scene.add(gltf.scene);
+      },
+      undefined,
+      (error) => {
+        console.error(error);
+        document.getElementById('error').innerHTML = 
+          '模型加载失败: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+      }
+    );
+
+    // 5. 动画循环
+    function animate() {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // 6. 处理窗口大小变化
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
