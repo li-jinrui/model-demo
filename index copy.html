@@ -5,14 +5,20 @@
 <head>
   <meta charset="UTF-8">
   <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0">sss -->
-  <!-- <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> -->
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>3D Model Viewer</title>
-   <!-- 改用全局变量方式引入Three.js -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.module.js",
+      "three/": "https://cdn.jsdelivr.net/npm/three@0.132.2/examples/jsm/"
+    }
+  }
+  </script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.176.0/build/three.min.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.176.0/examples/js/controls/OrbitControls.js"></script> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.176.0/examples/js/loaders/GLTFLoader.js"></script> -->
   <script src="main.js"></script>
   <!-- <script src="lib/controls/OrbitControls"></script> -->
   <style>
@@ -144,7 +150,7 @@
       load3DModels() {
         const loader = new GLTFLoader();
         loader.load(
-          'https://li-jinrui.github.io/model-demo/model/Soldier.glb', // Model path - place in same directory or adjust path
+          './model/Soldier.glb', // Model path - place in same directory or adjust path
           (gltf) => {
             this.testModel = gltf.scene;
             this.testModel.scale.setScalar(10);
