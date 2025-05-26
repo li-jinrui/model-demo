@@ -20,12 +20,12 @@
 
   <script>
     // 1. 检测WebGL支持
-    if (!Detector || !Detector.webgl) {
+    /* if (!Detector || !Detector.webgl) {
       document.getElementById('error').innerHTML = 
         '您的设备不支持WebGL，请升级浏览器或系统';
       document.getElementById('error').style.display = 'block';
       throw new Error('WebGL not supported');
-    }
+    } */
 
     // 2. 初始化Three.js
     const canvas = document.getElementById('canvas');
